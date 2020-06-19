@@ -1,0 +1,282 @@
+- Introduction
+    - When it comes to Java in calling a method and passing arguments as primitives, there's no doubt that it follows the pass-by-value model. When a method is called, the parameters are created and initialized with the value of the arguments passed. A mere copy and paste of the value. This means that any change to the parameters inside the method doesn't affect the original variables in the caller. They both are different variables with identical values.
+    - Trouble in understanding comes when dealing with Objects. The variable that holds an Object (non-primitive) is referred to as Reference Type. The reference type doesn't hold the actual value of the object like a primitive type does but it holds the memory address of the object in the heap. This means the value of the reference type is the address of the object. In Java, all the objects, be it local or instance, live in heap. The distinction comes only with the storage of reference type itself. A local reference type lives in the stack whereas an instance type in the heap.
+    - When reference types are being passed as a parameter to the object, the memory address reference of the object is passed and any changes to the object inside the method reflects in the caller. So, does this mean java is pass by reference when it comes to reference types?
+    - Strings in java are implemented in a special way to enhance performance so they're not discussed here.
+- Types of Variables
+    - Before getting into the pass by value/reference discussion, let's understand how a variable works. A variable is just like a container in a virtual memory location and stores a value. It can be accessed/modified whenever needed. In a language like Java, the value can either be the actual value or a address. There's no provision for a programmer get the address of a primitive type in Java. All of those underlying implementations are abstracted to ease the burden.
+    - In **C** language, the above mentioned reference types in java are called **Pointers**. Pointers are special type of variables that stored the address of any type of variable. Pointers are declared using ***** operator and can only be assigned with an address of another variable or NULL (called Null Pointer). Since pointers store the address of a variable, they behave the same way as reference types in Java. With the pointer, we modify the value of the actual variable with the process called De-referencing.
+    - In **C++**, along with pointers, another type of variable exists called Reference Variable. Reference variables can be termed as an alias/alternative name to the original variable. So, any change to the original variable or it's aliases affects everywhere. Reference variables are declared using **&** operator and they hold the same value and the memory address of the variable they're assigned. Reference variables must be initialized and it doesn't accept NULL. The underlying implementation of Reference Variables are not available to the programmer.
+    - Look at below code example in C++. Note that ***** and **&** operators have different functionality in a declaration and an expression. In declaration, * indicates that it is a pointer variable whereas in an expression it means de-referencing using which a value can be assigned based on its memory location. Similarly, & in declaration indicates its a reference variable whereas on the expression it acts as an address-of operator that is used to extract the address of a variable.
+
+        ```cpp
+        Code:
+
+        #include <iostream>
+        using namespace std;
+
+        int main(){
+            int var = 45;                //Simple  variable  , stores 45 as its value
+            int* varPtr = &var;          //Pointer variable  , stores the address of var as its value
+            int** varPtrPtr = &varPtr;   //Pointer variable  , double pointer, stores the address of varPtr as its value
+            int& varRef = var;           //Reference variable, acts as a reference to var
+            int* varRefPtr = &varRef;    //Pointer variable  , stores the address of varRef as its value  
+
+        		cout << "\nvar       : " << var;
+            cout << "\nvarPtr    : " << varPtr;
+            cout << "\nvarPtrPtr : " << varPtrPtr;
+            cout << "\nvarRef    : " << varRef;
+            cout << "\nvarRefPtr : " << varRefPtr;
+        }
+
+        Output:
+
+        var       : 45
+        varPtr    : 0x61fdb4
+        varPtrPtr : 0x61fda8
+        varRef    : 45
+        varRefPtr : 0x61fdb4
+        ```
+
+    - From the above output, we can see that varPtr stored the address of a whereas varRef stored the value of a. Similarly, the address of varRef i.e., varRefPtr is identical to the address of a i.e., varPtr. This proves that the pointers and reference variables are different (at least in the eyes of a programmer). Results are tabulated below.
+
+        [Variables](https://www.notion.so/8cceb4f7fc3c451a8bfdfbf31565464b)
+
+- Pass-by-value vs Pass-by-reference in C++
+    - Now that we understood different types of variables available, let's see a sample swap program in C++ employing these different variables. The code appears slightly bigger due to the various debugs added at every step to identify the value and address of the variable.
+        - swapByValue - This function takes in two simple variables and swaps using a temp variable.
+        - swapByPointer - This function takes in two pointer variables and attempts swapping. Note that here pointer dereferencing isn't used to show the difference between pointer and reference variables.
+        - swapByReference - This function takes in two reference variables and swaps them successfully.
+        - swapByPointerDereference - This function takes in two pointer variables and dereferences it using the address and swaps the value.
+
+        ```cpp
+        Code:
+
+        #include <iostream>
+        using namespace std;
+
+        void swapByPointerDereference(int* a4, int* b4){
+            cout << "\nEnters : a4 value is " <<a4 <<", b4 value is " << b4;
+            cout << "\nEnters : a4 address is " << &a4 <<", b3 address is " << &b4;
+            int temp = *a4; //Dereferencing using * operator
+            *a4 = *b4;
+            *b4 = temp;
+            cout << "\nExits  : a4 value is " <<a4 <<", b4 value is " << b4;
+            cout << "\nExits  : a4 address is " << &a4 <<", b4 address is " << &b4 << "\n";
+        }
+
+        void swapByReference(int& a3, int& b3){
+            cout << "\nEnters : a3 value is " <<a3 <<", b3 value is " << b3;
+            cout << "\nEnters : a3 address is " << &a3 <<", b3 address is " << &b3;
+            int temp = a3;
+            a3 = b3;
+            b3 = temp;
+            cout << "\nExits  : a3 value is " <<a3 <<", b3 value is " << b3;
+            cout << "\nExits  : a3 address is " << &a3 <<", b3 address is " << &b3 << "\n";
+        }
+
+        void swapByValue(int a1, int b1){
+            cout << "\nEnters : a1 value is " <<a1 <<", b1 value is " << b1;
+            cout << "\nEnters : a1 address is " << &a1 <<", b1 address is " << &b1;
+            int temp = a1;
+            a1 = b1;
+            b1 = temp;
+            cout << "\nExits  : a1 value is " <<a1 <<", b1 value is " << b1;
+            cout << "\nExits  : a1 address is " << &a1 <<", b1 address is " << &b1 << "\n";
+        }
+
+        void swapByPointer(int* a2, int* b2){
+            cout << "\nEnters : a2 value is " <<a2 <<", b2 value is " << b2;
+            cout << "\nEnters : a2 address is " << &a2 <<", b2 address is " << &b2;
+            int* temp = a2;
+            a2 = b2;
+            b2 = temp;
+            cout << "\nExits  : a2 value is " <<a2 <<", b2 value is " << b2;
+            cout << "\nExits  : a2 address is " << &a2 <<", b2 address is " << &b2 << "\n";
+        }
+
+        int main(){
+            int a1 = 45;
+            int b1 = 65;
+            int a2 = 15;
+            int b2 = 35;
+            int a3 = 25;
+            int b3 = 55;
+            
+            cout << "\n*-----Swap By Value-----*";
+            cout << "\nBefore : a1 value is " << a1 << ", b1 value is " << b1;
+            cout << "\nBefore : a1 address is " << &a1 << ", b1 address is " << &b1;
+            swapByValue(a1, b1);
+            cout << "After  : a1 value is " << a1 << ", b1 value is " << b1 << "\n";
+            cout << "After  : a1 address is " << &a1 << ", b1 address is " << &b1 << "\n";
+            
+            cout << "\n*-----Swap By Pointer-----*";
+            cout << "\nBefore : a2 value is " << a2 << ", b2 value is " << b2;
+            cout << "\nBefore : a2 address is " << &a2 << ", b2 address is " << &b2;
+            swapByPointer(&a2, &b2);
+            cout << "After  : a2 value is " << a2 << ", b2 value is " << b2 << "\n";
+            cout << "After  : a2 address is " << &a2 << ", b2 address is " << &b2 << "\n";
+            
+            cout << "\n*-----Swap By Reference-----*";
+            cout << "\nBefore : a3 value is " << a3 << ", b3 value is " << b3;
+            cout << "\nBefore : a3 address is " << &a3 << ", b3 address is " << &b3;
+            swapByReference(a3, b3);
+            cout << "After  : a3 value is " << a3 << ", b3 value is " << b3 << "\n";
+            cout << "After  : a3 address is " << &a3 << ", b3 address is " << &b3 << "\n";
+
+        		cout << "\n*-----Swap By Pointer Dereference-----*";
+            cout << "\nBefore : a4 value is " << a4 << ", b4 value is " << b4;
+            cout << "\nBefore : a4 address is " << &a4 << ", b4 address is " << &b4;
+            swapByPointerDereference(&a4, &b4);
+            cout << "After  : a4 value is " << a4 << ", b4 value is " << b4 << "\n";
+            cout << "After  : a4 address is " << &a4 << ", b4 address is " << &b4 << "\n";
+            
+        }
+
+        Output:
+
+        *-----Swap By Value-----*
+        Before : a1 value is 45, b1 value is 65
+        Before : a1 address is 0x61fe1c, b1 address is 0x61fe18
+        Enters : a1 value is 45, b1 value is 65
+        Enters : a1 address is 0x61fde0, b1 address is 0x61fde8
+        Exits  : a1 value is 65, b1 value is 45
+        Exits  : a1 address is 0x61fde0, b1 address is 0x61fde8
+        After  : a1 value is 45, b1 value is 65
+        After  : a1 address is 0x61fe1c, b1 address is 0x61fe18
+
+        *-----Swap By Pointer-----*
+        Before : a2 value is 15, b2 value is 35
+        Before : a2 address is 0x61fe14, b2 address is 0x61fe10
+        Enters : a2 value is 0x61fe14, b2 value is 0x61fe10
+        Enters : a2 address is 0x61fde0, b2 address is 0x61fde8
+        Exits  : a2 value is 0x61fe10, b2 value is 0x61fe14
+        Exits  : a2 address is 0x61fde0, b2 address is 0x61fde8
+        After  : a2 value is 15, b2 value is 35
+        After  : a2 address is 0x61fe14, b2 address is 0x61fe10
+
+        *-----Swap By Reference-----*
+        Before : a3 value is 25, b3 value is 55
+        Before : a3 address is 0x61fe0c, b3 address is 0x61fe08
+        Enters : a3 value is 25, b3 value is 55
+        Enters : a3 address is 0x61fe0c, b3 address is 0x61fe08
+        Exits  : a3 value is 55, b3 value is 25
+        Exits  : a3 address is 0x61fe0c, b3 address is 0x61fe08
+        After  : a3 value is 55, b3 value is 25
+        After  : a3 address is 0x61fe0c, b3 address is 0x61fe08
+
+        *-----Swap By Pointer Dereference-----*
+        Before : a4 value is 75, b4 value is 95
+        Before : a4 address is 0x61fe04, b4 address is 0x61fe00
+        Enters : a4 value is 0x61fe04, b4 value is 0x61fe00
+        Enters : a4 address is 0x61fde0, b3 address is 0x61fde8
+        Exits  : a4 value is 0x61fe04, b4 value is 0x61fe00
+        Exits  : a4 address is 0x61fde0, b4 address is 0x61fde8
+        After  : a4 value is 95, b4 value is 75
+        After  : a4 address is 0x61fe04, b4 address is 0x61fe00
+        ```
+
+    - From the output of the above, we can see that only using reference variables and pointer dereferencing the swap produced the desired outcome. And most importantly, the address of variables a3 and b3 remained the same only using reference variables throughout the whole execution.
+    - Even though we used pointers, they just employed pass-by-value with address instead of actual values.
+
+- Pass-by-value vs Pass-by-reference in Java
+    - In Java, there are no such variables called Reference Variables. The reference type that store the address of an object is just a pointer to the object. Lets see a similar program to the one seen above in Java.
+        - swapByValue - Method that swaps two primitives
+        - swapByReferenceType - Method that swap two reference types
+        - swapByObjectManipulation - Method that swaps objects by to something similar like pointer dereferencing
+
+        ```java
+        Code:
+
+        class Person {
+            int id;
+            String name;
+
+            Person(int id, String name){
+                this.id = id;
+                this.name = name;
+            }
+        }
+
+        public class PassBy {
+            public static void main(String... args) {
+                Person p1 = new Person(1, "Person1.0");
+                Person p2 = new Person(2, "Person2.0");
+                int a = 1, b = 2;
+                System.out.println();
+
+                System.out.println("*-----Swap By Value-----*");
+                System.out.println("Before : a is "+a+", b is "+b);
+                swapByValue(a, b);
+                System.out.println("After  : a is "+a+", b is "+b);
+                System.out.println();
+
+                System.out.println("*-----Swap By Reference Type-----*");
+                System.out.println("Before : p1 is "+p1+", p2 is "+p2);
+                System.out.println("Before : p1 id is "+p1.id+", p1 name is "+p1.name+"; p2 id is "+p2.id+", p2 name is "+p2.name);
+                swapByReferenceType(p1, p2);
+                System.out.println("After  : p1 is "+p1+", p2 is "+p2);
+                System.out.println("After  : p1 id is "+p1.id+", p1 name is "+p1.name+"; p2 id is "+p2.id+", p2 name is "+p2.name);   
+
+        				System.out.println("*-----Swap By Object Manipulation-----*");
+                System.out.println("Before : p3 is "+p3+", p4 is "+p4);
+                System.out.println("Before : p3 id is "+p3.id+", p3 name is "+p3.name+"; p4 id is "+p4.id+", p4 name is "+p4.name);
+                swapByObjectManipulation(p3, p4);
+                System.out.println("After  : p3 is "+p3+", p4 is "+p4);
+                System.out.println("After  : p3 id is "+p3.id+", p3 name is "+p3.name+"; p4 id is "+p4.id+", p4 name is "+p4.name);
+            }
+
+            static void swapByValue(int a, int b) {
+                System.out.println("Enters : a is "+a+", b is "+b);
+                int temp = a;
+                a = b;
+                b = temp;
+                System.out.println("Exits  : a is "+a+", b is "+b);
+            }
+
+            static void swapByReferenceType(Person p1, Person p2) {
+                System.out.println("Enters : p1 is "+p1+", p2 is "+p2);
+                Person temp = p1;
+                p1 = p2;
+                p2 = temp;
+                System.out.println("Exits  : p1 is "+p1+", p2 is "+p2);
+            }
+
+        		static void swapByObjectManipulation(Person p3, Person p4) {
+                System.out.println("Enters : p3 is "+p3+", p4 is "+p4);
+                Person temp = p3;
+                p3.id = p3.id;
+                p3.name = p3.name;
+                p4.id = temp.id;
+                p4.name = temp.name;
+                System.out.println("Exits  : p3 is "+p3+", p4 is "+p4);
+        }
+
+        Output:
+
+        *-----Swap By Value-----*
+        Before : a is 1, b is 2
+        Enters : a is 1, b is 2
+        Exits  : a is 2, b is 1
+        After  : a is 1, b is 2
+
+        *-----Swap By Reference Type-----*
+        Before : p1 is Person@18e8568, p2 is Person@33e5ccce
+        Before : p1 id is 1, p1 name is Person1.0; p2 id is 2, p2 name is Person2.0
+        Enters : p1 is Person@18e8568, p2 is Person@33e5ccce
+        Exits  : p1 is Person@33e5ccce, p2 is Person@18e8568
+        After  : p1 is Person@18e8568, p2 is Person@33e5ccce
+        After  : p1 id is 1, p1 name is Person1.0; p2 id is 2, p2 name is Person2.0
+
+        *-----Swap By Object Manipulation-----*
+        Before : p3 is Person@326de728, p4 is Person@25618e91
+        Before : p3 id is 3, p3 name is Person3.0; p4 id is 4, p4 name is Person4.0
+        Enters : p3 is Person@326de728, p4 is Person@25618e91
+        Exits  : p3 is Person@326de728, p4 is Person@25618e91
+        After  : p3 is Person@326de728, p4 is Person@25618e91
+        After  : p3 id is 3, p3 name is Person3.0; p4 id is 3, p4 name is Person3.0
+        ```
+
+    - Here, both methods produce the same output. Even though the reference type holds the address of an object as its value (Person), the value is just assigned onto the parameter of the method for processing. There parameters are no direct references to the object created in the caller. And Java language doesn't allow a programmer to create reference variables.
+- Conclusion
+Java passes values and these values are just copied across parameters for processing. There are no references as in C++. Java is designed based on C for the fundamentals and C++ for the Object Oriented Programming principle. There are no reference variables in Java. Java is pass by value or Java supports only pass by value model.
